@@ -41,6 +41,13 @@ export default function LecturerDashboard() {
     { name: 'Overall', score: summary.averageOverall },
     { name: 'Clarity', score: summary.averageClarity },
     { name: 'Engagement', score: summary.averageEngagement },
+    { name: 'Materials', score: summary.averageMaterials },
+    { name: 'Organization', score: summary.averageOrganization },
+    { name: 'Feedback', score: summary.averageFeedback },
+    { name: 'Pace', score: summary.averagePace },
+    { name: 'Support', score: summary.averageSupport },
+    { name: 'Fairness', score: summary.averageFairness },
+    { name: 'Relevance', score: summary.averageRelevance },
   ];
 
   const pieData = [

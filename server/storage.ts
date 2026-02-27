@@ -83,6 +83,13 @@ export class DatabaseStorage implements IStorage {
         averageOverall: 0,
         averageClarity: 0,
         averageEngagement: 0,
+        averageMaterials: 0,
+        averageOrganization: 0,
+        averageFeedback: 0,
+        averagePace: 0,
+        averageSupport: 0,
+        averageFairness: 0,
+        averageRelevance: 0,
         ratingDistribution: { excellent: 0, good: 0, average: 0, poor: 0 },
         totalEvaluations: 0,
       };
@@ -91,12 +98,26 @@ export class DatabaseStorage implements IStorage {
     let sumOverall = 0;
     let sumClarity = 0;
     let sumEngagement = 0;
+    let sumMaterials = 0;
+    let sumOrganization = 0;
+    let sumFeedback = 0;
+    let sumPace = 0;
+    let sumSupport = 0;
+    let sumFairness = 0;
+    let sumRelevance = 0;
     const dist = { excellent: 0, good: 0, average: 0, poor: 0 };
 
     for (const e of evals) {
       sumOverall += e.overallRating;
       sumClarity += e.clarityRating;
       sumEngagement += e.engagementRating;
+      sumMaterials += e.materialsRating;
+      sumOrganization += e.organizationRating;
+      sumFeedback += e.feedbackRating;
+      sumPace += e.paceRating;
+      sumSupport += e.supportRating;
+      sumFairness += e.fairnessRating;
+      sumRelevance += e.relevanceRating;
 
       if (e.overallRating === 5) dist.excellent++;
       else if (e.overallRating === 4) dist.good++;
@@ -104,12 +125,20 @@ export class DatabaseStorage implements IStorage {
       else dist.poor++;
     }
 
+    const count = evals.length;
     return {
-      averageOverall: sumOverall / evals.length,
-      averageClarity: sumClarity / evals.length,
-      averageEngagement: sumEngagement / evals.length,
+      averageOverall: sumOverall / count,
+      averageClarity: sumClarity / count,
+      averageEngagement: sumEngagement / count,
+      averageMaterials: sumMaterials / count,
+      averageOrganization: sumOrganization / count,
+      averageFeedback: sumFeedback / count,
+      averagePace: sumPace / count,
+      averageSupport: sumSupport / count,
+      averageFairness: sumFairness / count,
+      averageRelevance: sumRelevance / count,
       ratingDistribution: dist,
-      totalEvaluations: evals.length,
+      totalEvaluations: count,
     };
   }
 }

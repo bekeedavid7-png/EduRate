@@ -30,6 +30,14 @@ export const evaluations = pgTable("evaluations", {
   overallRating: integer("overall_rating").notNull(),
   clarityRating: integer("clarity_rating").notNull(),
   engagementRating: integer("engagement_rating").notNull(),
+  // Adding more ratings for the 10 questions requirement
+  materialsRating: integer("materials_rating").notNull().default(0),
+  organizationRating: integer("organization_rating").notNull().default(0),
+  feedbackRating: integer("feedback_rating").notNull().default(0),
+  paceRating: integer("pace_rating").notNull().default(0),
+  supportRating: integer("support_rating").notNull().default(0),
+  fairnessRating: integer("fairness_rating").notNull().default(0),
+  relevanceRating: integer("relevance_rating").notNull().default(0),
   comments: text("comments"),
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -97,6 +105,13 @@ export interface EvaluationSummary {
   averageOverall: number;
   averageClarity: number;
   averageEngagement: number;
+  averageMaterials: number;
+  averageOrganization: number;
+  averageFeedback: number;
+  averagePace: number;
+  averageSupport: number;
+  averageFairness: number;
+  averageRelevance: number;
   ratingDistribution: {
     excellent: number; // 5
     good: number;      // 4

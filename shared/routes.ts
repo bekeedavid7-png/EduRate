@@ -116,6 +116,13 @@ export const api = {
           averageOverall: z.number(),
           averageClarity: z.number(),
           averageEngagement: z.number(),
+          averageMaterials: z.number(),
+          averageOrganization: z.number(),
+          averageFeedback: z.number(),
+          averagePace: z.number(),
+          averageSupport: z.number(),
+          averageFairness: z.number(),
+          averageRelevance: z.number(),
           ratingDistribution: z.object({
             excellent: z.number(),
             good: z.number(),

@@ -1,11 +1,13 @@
 import { Link } from "wouter";
 import { Layout } from "@/components/layout";
-import { ArrowRight, Star, BarChart3, ShieldCheck } from "lucide-react";
+import { ArrowRight, Star, BarChart3, ShieldCheck, Users, BookOpen, CheckCircle2, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/use-auth";
+import { useLecturers } from "@/hooks/use-lecturers";
 
 export default function Home() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading: isAuthLoading } = useAuth();
+  const { data: lecturers } = useLecturers();
 
   return (
     <Layout>
@@ -34,7 +36,7 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            {!isLoading && user ? (
+            {!isAuthLoading && user ? (
               <Link 
                 href={user.role === 'student' ? '/student' : '/lecturer'}
                 className="w-full sm:w-auto px-8 py-4 rounded-xl font-semibold bg-gradient-to-r from-primary to-indigo-600 text-white shadow-xl shadow-primary/25 hover:shadow-2xl hover:shadow-primary/40 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
@@ -60,6 +62,50 @@ export default function Home() {
           </div>
         </motion.div>
 
+        {/* LECTURER LIST SECTION */}
+        <motion.section 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="mt-24 w-full max-w-6xl mx-auto px-6 py-16 bg-slate-50 rounded-[3rem] border border-slate-100"
+        >
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-display font-bold text-slate-900 mb-4">Our Lecturers</h2>
+            <p className="text-slate-500">Meet the dedicated educators on our platform</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {lecturers?.map((lecturer) => (
+              <motion.div
+                key={lecturer.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-all"
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center">
+                    <Users className="w-6 h-6 text-indigo-600" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="font-bold text-slate-900">{lecturer.name}</h3>
+                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{lecturer.department}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                  <BookOpen className="w-4 h-4 text-slate-400" />
+                  <span className="font-medium">{lecturer.courseCode}: {lecturer.courseName}</span>
+                </div>
+              </motion.div>
+            ))}
+            {!lecturers?.length && (
+              <div className="col-span-full text-center py-10 text-slate-400">
+                No lecturers have signed up yet.
+              </div>
+            )}
+          </div>
+        </motion.section>
+
         <motion.div 
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -68,8 +114,8 @@ export default function Home() {
         >
           <FeatureCard 
             icon={<Star className="w-6 h-6 text-amber-500" />}
-            title="Honest Reviews"
-            description="Students can rate clarity, engagement, and overall performance."
+            title="Quality Evaluations"
+            description="Detailed 10-point evaluation system covering all aspects of the learning experience."
           />
           <FeatureCard 
             icon={<BarChart3 className="w-6 h-6 text-primary" />}

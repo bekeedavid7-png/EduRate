@@ -6,6 +6,7 @@ import { setupAuth } from "./auth";
 import { z } from "zod";
 import { courses } from "@shared/schema";
 import { db } from "./db";
+import passport from "passport";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -41,7 +42,6 @@ export async function registerRoutes(
   });
 
   app.post(api.auth.login.path, (req, res, next) => {
-    const passport = require("passport");
     passport.authenticate("local", (err: any, user: any, info: any) => {
       if (err) return next(err);
       if (!user) return res.status(401).json({ message: "Invalid credentials" });
@@ -135,9 +135,14 @@ async function seedDatabase() {
     await db.insert(courses).values([
       { department: 'Computer Science', code: 'CS101', name: 'Intro to Computer Science' },
       { department: 'Computer Science', code: 'CS201', name: 'Data Structures' },
+      { department: 'Computer Science', code: 'CS301', name: 'Algorithms' },
       { department: 'Mathematics', code: 'MATH101', name: 'Calculus I' },
       { department: 'Mathematics', code: 'MATH201', name: 'Linear Algebra' },
+      { department: 'Mathematics', code: 'MATH301', name: 'Complex Analysis' },
       { department: 'Physics', code: 'PHYS101', name: 'Physics I' },
+      { department: 'Physics', code: 'PHYS201', name: 'Quantum Mechanics' },
+      { department: 'Biology', code: 'BIO101', name: 'General Biology' },
+      { department: 'Biology', code: 'BIO302', name: 'Genetics' },
     ]);
   }
 }

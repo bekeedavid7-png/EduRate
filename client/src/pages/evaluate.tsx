@@ -21,6 +21,13 @@ export default function Evaluate() {
   const [overallRating, setOverallRating] = useState(0);
   const [clarityRating, setClarityRating] = useState(0);
   const [engagementRating, setEngagementRating] = useState(0);
+  const [materialsRating, setMaterialsRating] = useState(0);
+  const [organizationRating, setOrganizationRating] = useState(0);
+  const [feedbackRating, setFeedbackRating] = useState(0);
+  const [paceRating, setPaceRating] = useState(0);
+  const [supportRating, setSupportRating] = useState(0);
+  const [fairnessRating, setFairnessRating] = useState(0);
+  const [relevanceRating, setRelevanceRating] = useState(0);
   const [comments, setComments] = useState("");
 
   const lecturerId = params?.lecturerId ? parseInt(params.lecturerId) : 0;
@@ -49,7 +56,9 @@ export default function Evaluate() {
     );
   }
 
-  const isFormValid = overallRating > 0 && clarityRating > 0 && engagementRating > 0;
+  const isFormValid = overallRating > 0 && clarityRating > 0 && engagementRating > 0 && 
+                      materialsRating > 0 && organizationRating > 0 && feedbackRating > 0 && 
+                      paceRating > 0 && supportRating > 0 && fairnessRating > 0 && relevanceRating > 0;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,6 +70,13 @@ export default function Evaluate() {
       overallRating,
       clarityRating,
       engagementRating,
+      materialsRating,
+      organizationRating,
+      feedbackRating,
+      paceRating,
+      supportRating,
+      fairnessRating,
+      relevanceRating,
       comments: comments.trim() || null,
     });
   };
@@ -120,6 +136,55 @@ export default function Evaluate() {
                 description="Did the lecturer encourage participation and keep the class engaged?"
                 value={engagementRating}
                 onChange={setEngagementRating}
+              />
+              <div className="h-px bg-slate-100"></div>
+              <RatingSection 
+                title="Quality of Materials" 
+                description="Were the course materials helpful and well-designed?"
+                value={materialsRating}
+                onChange={setMaterialsRating}
+              />
+              <div className="h-px bg-slate-100"></div>
+              <RatingSection 
+                title="Organization" 
+                description="Was the course well-structured and organized?"
+                value={organizationRating}
+                onChange={setOrganizationRating}
+              />
+              <div className="h-px bg-slate-100"></div>
+              <RatingSection 
+                title="Feedback Quality" 
+                description="Was the feedback provided on assignments timely and helpful?"
+                value={feedbackRating}
+                onChange={setFeedbackRating}
+              />
+              <div className="h-px bg-slate-100"></div>
+              <RatingSection 
+                title="Teaching Pace" 
+                description="Was the pace of the course appropriate for your learning?"
+                value={paceRating}
+                onChange={setPaceRating}
+              />
+              <div className="h-px bg-slate-100"></div>
+              <RatingSection 
+                title="Student Support" 
+                description="Did the lecturer provide adequate support outside of class?"
+                value={supportRating}
+                onChange={setSupportRating}
+              />
+              <div className="h-px bg-slate-100"></div>
+              <RatingSection 
+                title="Assessment Fairness" 
+                description="Were the assessments fair and aligned with course content?"
+                value={fairnessRating}
+                onChange={setFairnessRating}
+              />
+              <div className="h-px bg-slate-100"></div>
+              <RatingSection 
+                title="Content Relevance" 
+                description="Was the course content relevant to your field of study?"
+                value={relevanceRating}
+                onChange={setRelevanceRating}
               />
             </div>
 
