@@ -1,38 +1,117 @@
-import { type User, type InsertUser } from "@shared/schema";
-import { randomUUID } from "crypto";
-
-// modify the interface with any CRUD methods
-// you might need
+import { db } from "./db";
+import { eq } from "drizzle-orm";
+import {
+  users,
+  courses,
+  evaluations,
+  type User,
+  type InsertUser,
+  type Course,
+  type Evaluation,
+  type EvaluationSummary
+} from "@shared/schema";
 
 export interface IStorage {
-  getUser(id: string): Promise<User | undefined>;
+  getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  getCourses(): Promise<Course[]>;
+  getCourse(id: number): Promise<Course | undefined>;
+  getLecturers(): Promise<(User & { courseCode?: string, courseName?: string })[]>;
+  getEvaluationsByStudent(studentId: number): Promise<Evaluation[]>;
+  getEvaluationsByLecturer(lecturerId: number): Promise<Evaluation[]>;
+  createEvaluation(evaluation: Omit<Evaluation, 'id' | 'createdAt'>): Promise<Evaluation>;
+  getLecturerSummary(lecturerId: number): Promise<EvaluationSummary>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<string, User>;
-
-  constructor() {
-    this.users = new Map();
-  }
-
-  async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+export class DatabaseStorage implements IStorage {
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = randomUUID();
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
+    const [user] = await db.insert(users).values(insertUser).returning();
     return user;
+  }
+
+  async getCourses(): Promise<Course[]> {
+    return await db.select().from(courses);
+  }
+
+  async getCourse(id: number): Promise<Course | undefined> {
+    const [course] = await db.select().from(courses).where(eq(courses.id, id));
+    return course;
+  }
+
+  async getLecturers(): Promise<(User & { courseCode?: string, courseName?: string })[]> {
+    const result = await db.select({
+      user: users,
+      course: courses,
+    }).from(users).leftJoin(courses, eq(users.courseId, courses.id)).where(eq(users.role, 'lecturer'));
+    
+    return result.map(r => ({
+      ...r.user,
+      courseCode: r.course?.code,
+      courseName: r.course?.name,
+    }));
+  }
+
+  async getEvaluationsByStudent(studentId: number): Promise<Evaluation[]> {
+    return await db.select().from(evaluations).where(eq(evaluations.studentId, studentId));
+  }
+
+  async getEvaluationsByLecturer(lecturerId: number): Promise<Evaluation[]> {
+    return await db.select().from(evaluations).where(eq(evaluations.lecturerId, lecturerId));
+  }
+
+  async createEvaluation(evalData: Omit<Evaluation, 'id' | 'createdAt'>): Promise<Evaluation> {
+    const [evaluation] = await db.insert(evaluations).values(evalData).returning();
+    return evaluation;
+  }
+
+  async getLecturerSummary(lecturerId: number): Promise<EvaluationSummary> {
+    const evals = await this.getEvaluationsByLecturer(lecturerId);
+    
+    if (evals.length === 0) {
+      return {
+        averageOverall: 0,
+        averageClarity: 0,
+        averageEngagement: 0,
+        ratingDistribution: { excellent: 0, good: 0, average: 0, poor: 0 },
+        totalEvaluations: 0,
+      };
+    }
+
+    let sumOverall = 0;
+    let sumClarity = 0;
+    let sumEngagement = 0;
+    const dist = { excellent: 0, good: 0, average: 0, poor: 0 };
+
+    for (const e of evals) {
+      sumOverall += e.overallRating;
+      sumClarity += e.clarityRating;
+      sumEngagement += e.engagementRating;
+
+      if (e.overallRating === 5) dist.excellent++;
+      else if (e.overallRating === 4) dist.good++;
+      else if (e.overallRating === 3) dist.average++;
+      else dist.poor++;
+    }
+
+    return {
+      averageOverall: sumOverall / evals.length,
+      averageClarity: sumClarity / evals.length,
+      averageEngagement: sumEngagement / evals.length,
+      ratingDistribution: dist,
+      totalEvaluations: evals.length,
+    };
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
