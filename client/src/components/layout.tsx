@@ -41,11 +41,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   
                   <div className="flex items-center gap-3 mr-2">
                     <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold border border-indigo-200">
-                      {user.name.charAt(0).toUpperCase()}
+                      {user?.name?.charAt(0)?.toUpperCase() ?? "?"}
                     </div>
                     <div className="hidden md:block flex-col leading-tight">
-                      <span className="text-sm font-semibold block">{user.name}</span>
-                      <span className="text-xs text-muted-foreground capitalize">{user.role}</span>
+                      <span className="text-sm font-semibold block">{user?.name}</span>
+                      <span className="text-xs text-muted-foreground capitalize">{user?.role}</span>
                     </div>
                   </div>
 

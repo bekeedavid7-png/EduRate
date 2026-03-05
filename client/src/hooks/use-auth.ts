@@ -29,8 +29,7 @@ export function useAuth() {
         credentials: "include",
       });
       if (!res.ok) {
-        if (res.status === 401) throw new Error("Invalid credentials");
-        throw new Error("Login failed");
+        throw new Error("Invalid details");  // ✅ throw instead of return
       }
       return api.auth.login.responses[200].parse(await res.json());
     },
